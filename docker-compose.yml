@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  client:
+    build: 
+      context: ./Front-end
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: Front-end
+  
+
+  server:
+    build:
+      context: ./Back-end
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    container_name: Back-end
+  
+
+  ollama:
+    image: ollama/ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    ports:
+      - 11434:11434
+    volumes:
+      - ollama:/root/.ollama
+    restart: always
+    container_name: ollama
+
+  
+volumes:
+  ollama:
+      
+
