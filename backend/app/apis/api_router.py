@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, status, Query
 from dependency_injector.wiring import Provide, inject
 from configuration.injection_container import DependencyContainer
-from app.schemas.ollama_schemas import OllamaRequest, OllamaResponse, GenericResponse
+from app.schemas.ollama_schemas import OllamaResponse, GenericResponse
 from app.services.ollama_service import OllamaService
 from app.exceptions.api_exception_handler import APIRequestException
 

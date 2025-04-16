@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css'; // Optional: If you're using external CSS
 
 const App: React.FC = () => {
   const [text, setText] = useState('');
   const [fileName, setFileName] = useState('');
   const [response, setResponse] = useState<{ label: string; confidence: number } | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
 
-  // Handle text file input
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Only allow text files
     if (file.type !== 'text/plain') {
       alert('Only .txt files are allowed.');
       return;
@@ -22,14 +22,12 @@ const App: React.FC = () => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      // Set the content of the text file to the text state
       setText(reader.result as string);
       setFileName(file.name);
     };
-    reader.readAsText(file);  // Read the file content as text
+    reader.readAsText(file);
   };
 
-  // Handle the form submission
   const handleSubmit = async () => {
     if (!text.trim()) {
       alert('Please enter some text or upload a file.');
@@ -37,32 +35,24 @@ const App: React.FC = () => {
     }
 
     try {
-      // Send the text (either from textarea or file) to the backend
+      setLoading(true);
       const res = await axios.post('http://localhost:8000/api/classify', null, {
-        params: {
-          text: text,
-        },
+        params: { text: text },
       });
 
       setResponse(res.data);
-      setShowModal(true);  // Show the modal when response is available
-      console.log('response', res.data);
-
-      // Reset the text and file input after submission
+      setShowModal(true);
       setText('');
       setFileName('');
-      
-      // Reset the file input itself
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''; // This clears the file input
-      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (error) {
       alert('Error sending text to backend.');
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Close the modal
   const closeModal = () => {
     setShowModal(false);
   };
@@ -84,16 +74,19 @@ const App: React.FC = () => {
           type="file"
           accept=".txt"
           onChange={handleFileChange}
-          ref={fileInputRef} // Reference to the file input
+          ref={fileInputRef}
         />
         {fileName && <p className="file-info">📄 Loaded: <strong>{fileName}</strong></p>}
       </div>
 
-      <button className="submit-btn" onClick={handleSubmit}>
-        Submit
-      </button>
+      <button className="submit-btn" onClick={handleSubmit}>Classify</button>
 
-      {/* Modal (Popup) */}
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
+
       {showModal && response && (
         <div className="modal-overlay">
           <div className="modal-content">
