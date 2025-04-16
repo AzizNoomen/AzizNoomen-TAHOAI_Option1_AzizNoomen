@@ -2,17 +2,14 @@ import requests
 import json
 from fastapi import HTTPException
 from typing import Generator
-from app.exceptions.service_exceptions import ModelAlreadyExistsException, ModelNotFoundException
 from configuration.config import app_config
+from app.schemas.ollama_schemas import OllamaResponse
+from app.exceptions.service_exceptions import ModelNotFoundException
 from configuration.logging import logger
 
 class OllamaService:
 
     def generate_text(self, model: str, prompt: str, system: str = None, template: str = None, context: str = None, options: str = None) -> Generator[str, None, None]:
-        available_models = self.list_models()
-
-        if not any(model['name'] == model for model in available_models):
-            raise ModelNotFoundException(model)
         
         try:
             url = f"{app_config.BASE_URL}/api/generate"
@@ -73,3 +70,32 @@ class OllamaService:
             return "Ollama is running"
         except requests.exceptions.RequestException as e:
             raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+  
+
+    def classify_document(self, text: str, model:str="mistral:latest") -> dict:
+        prompt = (
+            f"Classify the following document text into one of the following types: "
+            f"invoice, resume, or contract.\n\n"
+            f"Return the result ONLY as a JSON object with this exact format and nothing else:\n"
+            f'{{\n  "label": "DocumentType",\n  "confidence": score\n}}\n\n'
+            f"Text:\n{text}")
+
+        response_generator = self.generate_text(model, prompt=prompt)
+        
+        # Collect the response pieces (it could come in chunks)
+        full_response = ""
+        for response_piece in response_generator:
+            full_response += response_piece
+        logger.info("full response", full_response)
+        
+        try:
+            result = json.loads(full_response)
+
+            if "label" in result and "confidence" in result:
+                return OllamaResponse(label=result["label"], confidence=result["confidence"])
+            else:
+                raise ValueError("Invalid response format")
+
+        except (json.JSONDecodeError, ValueError) as e:
+            return OllamaResponse(label="Unknown", confidence=0.0)
+

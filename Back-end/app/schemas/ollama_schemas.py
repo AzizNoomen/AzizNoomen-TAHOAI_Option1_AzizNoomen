@@ -35,11 +35,7 @@ class GenericResponse(BaseModel):
 
 class OllamaRequest(BaseModel):
     model: str
-    prompt: str
-    system: str | None = None
-    template: str | None = None
-    context: List[int] | None = None
-    options: Dict[str, Any] | None = None
+    text: str
 
 class OllamaResponse(BaseModel):
     label: str
