@@ -13,9 +13,6 @@ A lightweight web app that lets users paste or upload `.txt` documents and recei
 
 git clone https://github.com/AzizNoomen/TAHOAI_Option1_AzizNoomen
 
-shell
-Copy
-Edit
 
 ### 2. Change directory to the project folder
 
