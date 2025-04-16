@@ -11,29 +11,34 @@ A lightweight web app that lets users paste or upload `.txt` documents and recei
 
 ## 🚀 Run Locally with Docker Compose
 
-### 1. Clone the repository
-
-```bash
 git clone https://github.com/AzizNoomen/TAHOAI_Option1_AzizNoomen
 
-2. cd TAHOAI_Option1_AzizNoomen
+shell
+Copy
+Edit
 
-3. Build and start the app using Docker Compose
-    docker-compose up --build
+### 2. Change directory to the project folder
 
-4. Once the app is up and running, open your browser and go to:
-    http://localhost:3000
+cd TAHOAI_Option1_AzizNoomen
 
 
-Notes:
-Real Model: The backend uses a real machine learning model for classification, not a mock model. This model processes the input text and returns a label along with a confidence score.
+### 3. Build and start the app using Docker Compose
 
-Limitations:
+docker-compose up --build
 
-File Upload Restriction: The app only supports .txt files. Files with other extensions will be rejected.
 
-Language Limitation: The model is trained primarily for English text and may not perform well with non-English text or special characters.
+### 4. Once the app is up and running, open your browser and go to:
 
-No Support for Complex Formats: The app only processes plain text. Non-text content (e.g., images, tables) in the uploaded file will be ignored.
+http://localhost:3000
 
+
+## 📝 Notes
+
+- **Real Model**: The backend uses a real machine learning model for classification, not a mock model. This model processes the input text and returns a label along with a confidence score.
+
+## ⚠️ Limitations
+
+- **File Upload Restriction**: The app only supports `.txt` files. Files with other extensions will be rejected.
+- **Language Limitation**: The model is trained primarily for English text and may not perform well with non-English text or special characters.
+- **No Support for Complex Formats**: The app only processes plain text. Non-text content (e.g., images, tables) in the uploaded file will be ignored.
 
