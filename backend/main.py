@@ -3,9 +3,10 @@ from uvicorn import Server, Config
 from configuration.injection_container import DependencyContainer
 from configuration.config import app_config
 from app.apis.api_router import router as router
+from app.middlewares.cors_middleware import middlewares
 
 
-app = FastAPI(title=app_config.APP_TITLE)
+app = FastAPI(title=app_config.APP_TITLE, middleware=middlewares)
 
 app.container = DependencyContainer()
 

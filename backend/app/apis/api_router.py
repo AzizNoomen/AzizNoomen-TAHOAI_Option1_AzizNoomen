@@ -5,15 +5,15 @@ from app.schemas.ollama_schemas import OllamaRequest, OllamaResponse, GenericRes
 from app.services.ollama_service import OllamaService
 from app.exceptions.api_exception_handler import APIRequestException
 
-router = APIRouter(prefix="/service")
+router = APIRouter()
 
-@router.post("/answer", response_model=OllamaResponse)
+@router.post("/classify", response_model=OllamaResponse)
 @inject
-async def generate_response(
-                request_body: OllamaRequest = Body(...),
+def classify_text(
+                text: str = Query(...),
                 ollama_service: OllamaService = Depends(Provide[DependencyContainer.ollama_service])):
     try:
-        response = ollama_service.classify_document(**request_body.dict())
+        response = ollama_service.classify_document(text)
         return response
     except ValueError as value_error:
         raise APIRequestException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(value_error))

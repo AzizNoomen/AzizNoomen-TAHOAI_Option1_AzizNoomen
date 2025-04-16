@@ -34,7 +34,6 @@ class GenericResponse(BaseModel):
     response: Optional[str] = None
 
 class OllamaRequest(BaseModel):
-    model: str
     text: str
 
 class OllamaResponse(BaseModel):

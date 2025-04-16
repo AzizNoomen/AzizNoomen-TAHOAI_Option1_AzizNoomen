@@ -72,7 +72,7 @@ class OllamaService:
             raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
   
 
-    def classify_document(self, text: str, model:str="mistral:latest") -> dict:
+    def classify_document(self, text: str) -> dict:
         prompt = (
             f"Classify the following document text into one of the following types: "
             f"invoice, resume, or contract.\n\n"
@@ -80,13 +80,12 @@ class OllamaService:
             f'{{\n  "label": "DocumentType",\n  "confidence": score\n}}\n\n'
             f"Text:\n{text}")
 
-        response_generator = self.generate_text(model, prompt=prompt)
+        response_generator = self.generate_text(model="mistral:latest", prompt=prompt)
         
         # Collect the response pieces (it could come in chunks)
         full_response = ""
         for response_piece in response_generator:
             full_response += response_piece
-        logger.info("full response", full_response)
         
         try:
             result = json.loads(full_response)
